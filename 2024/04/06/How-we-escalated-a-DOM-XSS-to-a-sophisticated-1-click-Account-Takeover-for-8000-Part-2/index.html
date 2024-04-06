@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://frogsec.github.io/2024/04/06/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000-Part-2/Untitled%2010.png">
 <meta property="og:image" content="https://frogsec.github.io/2024/04/06/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000-Part-2/Untitled%2011.png">
 <meta property="article:published_time" content="2024-04-06T06:53:24.000Z">
-<meta property="article:modified_time" content="2024-04-06T07:20:02.211Z">
+<meta property="article:modified_time" content="2024-04-06T07:33:51.521Z">
 <meta property="article:author" content="Benasin, LongTheShrimp, K0m3g4">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://frogsec.github.io/2024/04/06/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000-Part-2/Untitled.png">
@@ -101,8 +101,8 @@
     <span id="actions">
       <ul>
         
+        <li><a class="icon" aria-label="Previous post" href="/2024/04/06/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000-Part-1/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
-        <li><a class="icon" aria-label="Next post" href="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000-Part-1/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -132,7 +132,7 @@
     
     
       <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#II-Our-discovery"><span class="toc-number">1.</span> <span class="toc-text">II. Our discovery</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Finding-the-DOM-XSS-%F0%9F%94%8E%F0%9F%90%9B"><span class="toc-number">1.1.</span> <span class="toc-text">3. Finding the DOM XSS 🔎🐛</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-First-attempt-on-performing-the-ATO-%F0%9F%98%A5"><span class="toc-number">1.2.</span> <span class="toc-text">4. First attempt on performing the ATO 😥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-How-we-overcome-the-1-time-code-issue-%F0%9F%98%A4"><span class="toc-number">1.3.</span> <span class="toc-text">5. How we overcome the 1-time code issue 😤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-Escalate-escalate-escalate-%E2%80%A6-to-one-click-mail-ATO-%F0%9F%8F%83%E2%80%8D%E2%99%82%EF%B8%8F%F0%9F%8F%83%E2%80%8D%E2%99%82%EF%B8%8F%F0%9F%8F%83%E2%80%8D%E2%99%82%EF%B8%8F"><span class="toc-number">1.4.</span> <span class="toc-text">6. Escalate, escalate, escalate,… to one-click mail ATO 🏃‍♂️🏃‍♂️🏃‍♂️</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#III-Conclusion"><span class="toc-number">2.</span> <span class="toc-text">III. Conclusion</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#III-DOM-XSS-to-1-click-Account-Takeover"><span class="toc-number">1.</span> <span class="toc-text">III. DOM XSS to 1-click Account Takeover</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Finding-the-DOM-XSS-%F0%9F%94%8E%F0%9F%90%9B"><span class="toc-number">1.1.</span> <span class="toc-text">1. Finding the DOM XSS 🔎🐛</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-First-attempt-on-performing-the-ATO-%F0%9F%98%A5"><span class="toc-number">1.2.</span> <span class="toc-text">2. First attempt on performing the ATO 😥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-How-we-overcome-the-1-time-code-issue-%F0%9F%98%A4"><span class="toc-number">1.3.</span> <span class="toc-text">3. How we overcome the 1-time code issue 😤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Escalate-escalate-escalate-%E2%80%A6-to-one-click-mail-ATO-%F0%9F%8F%83%E2%80%8D%E2%99%82%EF%B8%8F%F0%9F%8F%83%E2%80%8D%E2%99%82%EF%B8%8F%F0%9F%8F%83%E2%80%8D%E2%99%82%EF%B8%8F"><span class="toc-number">1.4.</span> <span class="toc-text">4. Escalate, escalate, escalate,… to one-click mail ATO 🏃‍♂️🏃‍♂️🏃‍♂️</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IV-Conclusion"><span class="toc-number">2.</span> <span class="toc-text">IV. Conclusion</span></a></li></ol>
       </div>
     
   </span>
@@ -174,11 +174,11 @@
   <div class="content e-content" itemprop="articleBody">
     <p>This is the second part of our blog series on <strong>How we escalated a DOM XSS to a sophisticated 1-click Account Takeover for $8000</strong>:</p>
 <ul>
-<li><a href="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000-Part-1/">Part 1: Understanding the OAuth login flow and the initial attack surface</a></li>
+<li><a href="/2024/04/06/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000-Part-1/">Part 1: Understanding the OAuth login flow and the initial attack surface</a></li>
 <li><em>Part 2: Exploiting the DOM XSS and escalating it to a 1-click Account Takeover</em></li>
 </ul>
 <p>If you haven’t read the first part, we highly recommend you to do so to understand the context of this blog post.</p>
-<h2 id="II-Our-discovery"><a href="#II-Our-discovery" class="headerlink" title="II. Our discovery"></a>II. Our discovery</h2><p>Here is the sequence diagram of the complete OAuth flow from <a href="/2024/03/27/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000-Part-1/">Part 1</a>:</p>
+<h2 id="III-DOM-XSS-to-1-click-Account-Takeover"><a href="#III-DOM-XSS-to-1-click-Account-Takeover" class="headerlink" title="III. DOM XSS to 1-click Account Takeover"></a>III. DOM XSS to 1-click Account Takeover</h2><p>Here is the sequence diagram of the complete OAuth flow from <a href="/2024/04/06/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000-Part-1/">Part 1</a>:</p>
 
     <div>
       <img src="/2024/04/06/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000-Part-2/Untitled.png" alt="" data-action="zoom" class="photozoom">
@@ -186,7 +186,7 @@
     </div>
 
 
-<h3 id="3-Finding-the-DOM-XSS-🔎🐛"><a href="#3-Finding-the-DOM-XSS-🔎🐛" class="headerlink" title="3. Finding the DOM XSS 🔎🐛"></a>3. Finding the DOM XSS 🔎🐛</h3>
+<h3 id="1-Finding-the-DOM-XSS-🔎🐛"><a href="#1-Finding-the-DOM-XSS-🔎🐛" class="headerlink" title="1. Finding the DOM XSS 🔎🐛"></a>1. Finding the DOM XSS 🔎🐛</h3>
     <div>
       <img src="/2024/04/06/How-we-escalated-a-DOM-XSS-to-a-sophisticated-1-click-Account-Takeover-for-8000-Part-2/Untitled%202.png" alt="" data-action="zoom" class="photozoom">
       
@@ -229,7 +229,7 @@
     </div>
 
 <p>So we now have a valid XSS payload to bypass the domain name check!</p>
-<h3 id="4-First-attempt-on-performing-the-ATO-😥"><a href="#4-First-attempt-on-performing-the-ATO-😥" class="headerlink" title="4. First attempt on performing the ATO 😥"></a>4. First attempt on performing the ATO 😥</h3><p>In order for us to perform the ATO we need to get 2 things:</p>
+<h3 id="2-First-attempt-on-performing-the-ATO-😥"><a href="#2-First-attempt-on-performing-the-ATO-😥" class="headerlink" title="2. First attempt on performing the ATO 😥"></a>2. First attempt on performing the ATO 😥</h3><p>In order for us to perform the ATO we need to get 2 things:</p>
 <ul>
 <li>The code verifier (available in the <code>xxxxx-pkce</code> cookie) associated with the authorization code</li>
 <li>The authorization code (available on the URL)</li>
@@ -251,7 +251,7 @@
 <figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span><span class="attr">"error"</span><span class="punctuation">:</span><span class="string">"invalid_grant"</span><span class="punctuation">,</span><span class="attr">"errorDescription"</span><span class="punctuation">:</span><span class="string">"`code` is expired"</span><span class="punctuation">}</span></span><br></pre></td></tr></tbody></table></figure>
 
 <p>We need to find some way to allow us to capture the victim’s <code>code verifier</code> and the associated <code>authorization code</code> before it is used!</p>
-<h3 id="5-How-we-overcome-the-1-time-code-issue-😤"><a href="#5-How-we-overcome-the-1-time-code-issue-😤" class="headerlink" title="5. How we overcome the 1-time code issue 😤"></a>5. How we overcome the 1-time code issue 😤</h3><ul>
+<h3 id="3-How-we-overcome-the-1-time-code-issue-😤"><a href="#3-How-we-overcome-the-1-time-code-issue-😤" class="headerlink" title="3. How we overcome the 1-time code issue 😤"></a>3. How we overcome the 1-time code issue 😤</h3><ul>
 <li><p>In order to get the valid access token of the victim, we need to get their code verifier (<code>xxxxx-pkce</code>) and the unused generated authorization code (<code>code</code>).</p>
 </li>
 <li><p>Few hours later, we came up with the idea of forcing the victim’s browser to use the <code>attacker’s authorization code</code> to trigger the XSS and steal the <code>victim’s unused authorization code</code>.</p>
@@ -345,7 +345,7 @@
 <li><p>After receiving both of the victim’s <code>authorization_code</code> and <code>code_verifier</code> on our attacker’s server. We can use them to exchange for the access token 💪💪💪</p>
 </li>
 </ul>
-<h3 id="6-Escalate-escalate-escalate-…-to-one-click-mail-ATO-🏃‍♂️🏃‍♂️🏃‍♂️"><a href="#6-Escalate-escalate-escalate-…-to-one-click-mail-ATO-🏃‍♂️🏃‍♂️🏃‍♂️" class="headerlink" title="6. Escalate, escalate, escalate,… to one-click mail ATO 🏃‍♂️🏃‍♂️🏃‍♂️"></a>6. Escalate, escalate, escalate,… to one-click mail ATO 🏃‍♂️🏃‍♂️🏃‍♂️</h3><ul>
+<h3 id="4-Escalate-escalate-escalate-…-to-one-click-mail-ATO-🏃‍♂️🏃‍♂️🏃‍♂️"><a href="#4-Escalate-escalate-escalate-…-to-one-click-mail-ATO-🏃‍♂️🏃‍♂️🏃‍♂️" class="headerlink" title="4. Escalate, escalate, escalate,… to one-click mail ATO 🏃‍♂️🏃‍♂️🏃‍♂️"></a>4. Escalate, escalate, escalate,… to one-click mail ATO 🏃‍♂️🏃‍♂️🏃‍♂️</h3><ul>
 <li>After the success in performing the ATO by tricking the user into clicking on the crafted link, this is clearly a valid issue and we could submit the bug and then rest 😴.</li>
 <li>However, our ego (😎) told us that this was still not the maximum impact of this bug, therefore, we continued to raise the impact.</li>
 <li>The problem that stops this bug from maximizing the impact is it requires a huge effort in the social engineering state to trick the victim into clicking on the crafted link. Obviously, there is a very small chance that the user will click on the lengthy link like that.</li>
@@ -373,7 +373,7 @@
 </ul>
 <p>⇒ 💣💣💣 So that is our full chain of One-click ATO via the target’s email.</p>
 <p>In our actual exploit, we have created a script to automate all the steps we’ve mentioned.</p>
-<h2 id="III-Conclusion"><a href="#III-Conclusion" class="headerlink" title="III. Conclusion"></a>III. Conclusion</h2><p>We hope that you guys enjoy our first blog post! Some details has been ruled out (encoding, payload length limiting, …) in order to keep this blog post concise and not too confusing.</p>
+<h2 id="IV-Conclusion"><a href="#IV-Conclusion" class="headerlink" title="IV. Conclusion"></a>IV. Conclusion</h2><p>We hope that you guys enjoy our first blog post! Some details has been ruled out (encoding, payload length limiting, …) in order to keep this blog post concise and not too confusing.</p>
 <p>We truly believe that by focusing on understanding how every thing works, interesing issues will start showing up!</p>
 <p>This vulnerability took us a whole week to identify and write the fully functional exploit. Another week to explain and go through the triaging stages. </p>
 <p>Side story, this is also our first time having a Google Meet session with the program’s security team. We had to perform the exploit live to demonstrate the impact until 2AM in the morning. It was a pretty fun experience. :D</p>
@@ -418,7 +418,7 @@
     
     
       <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#II-Our-discovery"><span class="toc-number">1.</span> <span class="toc-text">II. Our discovery</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Finding-the-DOM-XSS-%F0%9F%94%8E%F0%9F%90%9B"><span class="toc-number">1.1.</span> <span class="toc-text">3. Finding the DOM XSS 🔎🐛</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-First-attempt-on-performing-the-ATO-%F0%9F%98%A5"><span class="toc-number">1.2.</span> <span class="toc-text">4. First attempt on performing the ATO 😥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-How-we-overcome-the-1-time-code-issue-%F0%9F%98%A4"><span class="toc-number">1.3.</span> <span class="toc-text">5. How we overcome the 1-time code issue 😤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-Escalate-escalate-escalate-%E2%80%A6-to-one-click-mail-ATO-%F0%9F%8F%83%E2%80%8D%E2%99%82%EF%B8%8F%F0%9F%8F%83%E2%80%8D%E2%99%82%EF%B8%8F%F0%9F%8F%83%E2%80%8D%E2%99%82%EF%B8%8F"><span class="toc-number">1.4.</span> <span class="toc-text">6. Escalate, escalate, escalate,… to one-click mail ATO 🏃‍♂️🏃‍♂️🏃‍♂️</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#III-Conclusion"><span class="toc-number">2.</span> <span class="toc-text">III. Conclusion</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#III-DOM-XSS-to-1-click-Account-Takeover"><span class="toc-number">1.</span> <span class="toc-text">III. DOM XSS to 1-click Account Takeover</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Finding-the-DOM-XSS-%F0%9F%94%8E%F0%9F%90%9B"><span class="toc-number">1.1.</span> <span class="toc-text">1. Finding the DOM XSS 🔎🐛</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-First-attempt-on-performing-the-ATO-%F0%9F%98%A5"><span class="toc-number">1.2.</span> <span class="toc-text">2. First attempt on performing the ATO 😥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-How-we-overcome-the-1-time-code-issue-%F0%9F%98%A4"><span class="toc-number">1.3.</span> <span class="toc-text">3. How we overcome the 1-time code issue 😤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Escalate-escalate-escalate-%E2%80%A6-to-one-click-mail-ATO-%F0%9F%8F%83%E2%80%8D%E2%99%82%EF%B8%8F%F0%9F%8F%83%E2%80%8D%E2%99%82%EF%B8%8F%F0%9F%8F%83%E2%80%8D%E2%99%82%EF%B8%8F"><span class="toc-number">1.4.</span> <span class="toc-text">4. Escalate, escalate, escalate,… to one-click mail ATO 🏃‍♂️🏃‍♂️🏃‍♂️</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IV-Conclusion"><span class="toc-number">2.</span> <span class="toc-text">IV. Conclusion</span></a></li></ol>
       </div>
     
 
